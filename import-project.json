@@ -10,12 +10,14 @@
             "git-commit"
         ],
         "optional": [
+            "config",
             "git-org",
             "git-repo",
             "git-action"
         ],
         "examples": [
             [
+                "config",
                 "git-owner",
                 "git-name",
                 "git-version",
@@ -61,6 +63,11 @@
         }
     },
     "params": {
+        "config": {
+            "value": "project-config.json",
+            "query": "Project Configuration",
+            "message": "GitHub Import Project configuration"
+        },
         "git-owner": {
             "value": "JosiahSiegel",
             "query": "Project Owner",
