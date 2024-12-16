@@ -1,0 +1,17 @@
+{
+  "vendor": {
+    "name": "JosiahSiegel",
+    "repo": "AzViz-action",
+    "version": "v1.0.3",
+    "commit": "663e24299a6336f1ff8dbddadfac1ba5d462f731aaa"
+  },
+  "project": {
+    "owner": "CDCgov",
+    "repo": "prime-reportstream",
+    "team": "devsecops",
+    "author": "emvaldes",
+    "action": "azviz"
+  },
+  "reload": false,
+  "verbose": true
+}
