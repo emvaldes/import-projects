@@ -64,7 +64,8 @@ Required    --git-owner         Vendor GitHub Project owner
             --git-version       Vendor GitHub Action's version
             --git-commit        Vendor GitHub Action's commit-id
 
-Optional    --git-org           GitHub Organization name
+Optional    --config            GitHub Import Project configuration
+            --git-org           GitHub Organization name
             --git-repo          GitHub project repository
             --git-action        GitHub import project's name
             --examples          Display script's execution options
@@ -74,13 +75,14 @@ Optional    --git-org           GitHub Organization name
 
 Usage:
 
-import-project --git-owner="JosiahSiegel" \
-               --git-name="AzViz-action" \
-               --git-version="v1.0.3" \
-               --git-commit="663e24299a6336f1ff8dbddadfac1ba5d462f731" \
-               --git-org="CDCgov" \
-               --git-repo="prime-reportstream" \
-               --git-action="azviz" \
+import-project.shell --config="project-config.json" \
+                     --git-owner="JosiahSiegel" \
+                     --git-name="AzViz-action" \
+                     --git-version="v1.0.3" \
+                     --git-commit="663e24299a6336f1ff8dbddadfac1ba5d462f731" \
+                     --git-org="CDCgov" \
+                     --git-repo="prime-reportstream" \
+                     --git-action="azviz" \
 ;
 ```
 
