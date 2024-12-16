@@ -1,0 +1,123 @@
+#!/usr/bin/env python
+
+import os
+import json
+import subprocess
+from argparse import ArgumentParser
+from pathlib import Path
+
+def parse_arguments():
+    """Parse command-line arguments in a positionless manner."""
+    parser = ArgumentParser(description="Import Project Script")
+    parser.add_argument("--config", type=str, required=True, help="Path to the JSON configuration file.")
+    parser.add_argument("--reload", action="store_true", help="Purge existing content if repository exists.")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose output.")
+    args = parser.parse_args()
+    return args
+
+def load_config(json_file):
+    """Load and parse the JSON configuration."""
+    if not Path(json_file).is_file():
+        raise FileNotFoundError(f"Configuration file '{json_file}' not found.")
+
+    try:
+        with open(json_file, 'r') as file:
+            config = json.load(file)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON format in '{json_file}': {e}")
+
+    return config
+
+def warning(message, error_code=1):
+    """Display a warning message and optionally exit with an error code."""
+    print(f"Warning: {message}\n")
+    if error_code:
+        exit(error_code)
+
+def download_repository(repo_url, destination, reload):
+    """Clone or update a GitHub repository."""
+    try:
+        if Path(destination).exists():
+            if reload:
+                print(f"Purging existing content in {destination}...")
+                subprocess.run(["rm", "-rf", destination], check=True)
+            else:
+                print(f"Warning: Target path '{destination}' is not empty.")
+                return False
+
+        print(f"Cloning repository: {repo_url}")
+        subprocess.run(["git", "clone", repo_url, destination], check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        warning(f"Failed to clone repository: {e}", error_code=2)
+
+def process_files(vendor_name, vendor_repo, project_owner, project_path, vendor_commit):
+    """Find and process files, updating their content based on the configuration."""
+    try:
+        files = subprocess.run(
+            [
+                "find", ".",
+                "-type", "f",
+                "-not", "-path", "*/.git/*",
+                "-not", "-path", "*/.github/*"
+            ],
+            capture_output=True,
+            text=True
+        ).stdout.splitlines()
+
+        for file in files:
+            try:
+                with open(file, 'r') as f:
+                    content = f.read()
+
+                content = content.replace(
+                    f"{vendor_name}/{vendor_repo}", f"{project_owner}/{project_path}"
+                ).replace(
+                    f"{vendor_commit}", vendor_commit
+                )
+
+                with open(file, 'w') as f:
+                    f.write(content)
+
+                print(f"Processed file: {file}")
+            except (IOError, OSError) as e:
+                warning(f"Error processing file '{file}': {e}", error_code=None)
+    except subprocess.CalledProcessError as e:
+        warning(f"Failed to find files for processing: {e}", error_code=3)
+
+def main():
+    # Parse command-line arguments
+    args = parse_arguments()
+
+    # Load configuration from file
+    try:
+        config = load_config(args.config)
+    except (FileNotFoundError, ValueError) as e:
+        warning(str(e))
+        return
+
+    vendor = config.get("vendor", {})
+    project = config.get("project", {})
+
+    repo_url = f"https://github.com/{vendor['name']}/{vendor['repo']}.git"
+    destination = Path(project['repo']) / ".github" / "actions" / project['action']
+
+    if args.verbose:
+        print(f"Vendor: {vendor}")
+        print(f"Project: {project}")
+
+    # Clone repository
+    if not download_repository(repo_url, destination, args.reload):
+        return
+
+    # Process files
+    process_files(
+        vendor_name=vendor['name'],
+        vendor_repo=vendor['repo'],
+        project_owner=project['owner'],
+        project_path=f"{project['repo']}/.github/actions/{project['action']}",
+        vendor_commit=vendor['commit']
+    )
+
+if __name__ == "__main__":
+    main()
