@@ -42,8 +42,49 @@ $ ln -sv ./import-project.shell ./import-project ;
 **Note**: Please, make sure that both the Shell/Bash script and the JSON-based configuration file are named the same.
 The application does expect both components to exist in the same location unless a custom configuration's path is provided.
 
+3. Performing operations in a safe-environment:
+```bash
+$ cd ./prime-reportstream ;
+$ import-project --help ;
+```
+
+**Note**: This will allow you to import the target GitHub Repository (Action) into a fake environment (does not contain an actual project).
+- This will allow you to test your workflow and determine if the imported GitHub Repository (Action) will require further changes other than those included by default.
+- Once you are done, then make sure to switch to an actual local repository for your project and perform the actual importing and publishing operations.
+
 This automated framework has a built-in helper (assistant) that handles all help related requests.
-It uses a set of predefined built-in features `help`, `examples`, `wizard` and `info`.
+It uses a set of predefined built-in features `help`, `examples`, `wizard` and `info`. See example:
+
+``` console
+$ import-project --help ;
+Script-name: import-project
+
+Required    --git-owner         Vendor GitHub Project owner
+            --git-name          Vendor GitHub Repo name
+            --git-version       Vendor GitHub Action's version
+            --git-commit        Vendor GitHub Action's commit-id
+
+Optional    --git-org           GitHub Organization name
+            --git-repo          GitHub project repository
+            --git-action        GitHub import project's name
+            --examples          Display script's execution options
+            --wizard            Parse user-input to execute command
+            --info              Project credits and online references
+            --help              Show this help message and exits
+
+Usage:
+
+import-project --git-owner="JosiahSiegel" \
+               --git-name="AzViz-action" \
+               --git-version="v1.0.3" \
+               --git-commit="663e24299a6336f1ff8dbddadfac1ba5d462f731" \
+               --git-org="CDCgov" \
+               --git-repo="prime-reportstream" \
+               --git-action="azviz" \
+;
+```
+
+#### This JSON-file configuration drives these support features:
 
 ``` json
 {
@@ -163,37 +204,6 @@ It uses a set of predefined built-in features `help`, `examples`, `wizard` and `
         }
     }
 }
-```
-
-This allows for operations/requests like:
-
-``` console
-$ import-project --help ;
-Script-name: import-project
-
-Required    --git-owner         Vendor GitHub Project owner
-            --git-name          Vendor GitHub Repo name
-            --git-version       Vendor GitHub Action's version
-            --git-commit        Vendor GitHub Action's commit-id
-
-Optional    --git-org           GitHub Organization name
-            --git-repo          GitHub project repository
-            --git-action        GitHub import project's name
-            --examples          Display script's execution options
-            --wizard            Parse user-input to execute command
-            --info              Project credits and online references
-            --help              Show this help message and exits
-
-Usage:
-
-import-project --git-owner="JosiahSiegel" \
-               --git-name="AzViz-action" \
-               --git-version="v1.0.3" \
-               --git-commit="663e24299a6336f1ff8dbddadfac1ba5d462f731" \
-               --git-org="CDCgov" \
-               --git-repo="prime-reportstream" \
-               --git-action="azviz" \
-;
 ```
 
 ## Usage
