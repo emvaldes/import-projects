@@ -1,0 +1,117 @@
+{
+    "script": {
+        "headers": {
+            "interview": "Please, answer the following questions"
+        },
+        "required": [
+            "git-owner",
+            "git-name",
+            "git-version",
+            "git-commit"
+        ],
+        "optional": [
+            "git-org",
+            "git-repo",
+            "git-action"
+        ],
+        "examples": [
+            [
+                "git-owner",
+                "git-name",
+                "git-version",
+                "git-commit",
+                "git-org",
+                "git-repo",
+                "git-action"
+            ]
+        ],
+        "info": {
+            "service": {
+                "id": "github.com",
+                "domain": "CDCgov",
+                "repo": "prime-reportstream",
+                "path": "blob/master/devsecops/import-project.shell"
+            },
+            "team": {
+                "id": "devsecops",
+                "name": "DevSecOps Team"
+            },
+            "devsecops": [
+                {
+                    "name": "Matt Szubrycht",
+                    "email": "matt.szubrycht@aquia.io",
+                    "role": "Director of DevSecOps & SRE"
+                },
+                {
+                    "name": "Eduardo Valdes",
+                    "email": "eduardo.valdes@aquia.io",
+                    "role": "DevSecOps Engineer"
+                },
+                {
+                    "name": "Scott Zimmerman",
+                    "email": "scott.zimmerman@aquia.io",
+                    "role": "Senior GRC Engineer"
+                },
+                {
+                    "name": "Beth Beza",
+                    "email": "beth.beza@aquia.io",
+                    "role": "Mid-Level Security Analyst"
+                }
+            ]
+        }
+    },
+    "params": {
+        "git-owner": {
+            "value": "JosiahSiegel",
+            "query": "Project Owner",
+            "message": "Vendor GitHub Project owner"
+        },
+        "git-name": {
+            "value": "AzViz-action",
+            "query": "GitHub Repo Name",
+            "message": "Vendor GitHub Repo name"
+        },
+        "git-version": {
+            "value": "v1.0.3",
+            "query": "Action Version",
+            "message": "Vendor GitHub Action's version"
+        },
+        "git-commit": {
+            "value": "663e24299a6336f1ff8dbddadfac1ba5d462f731",
+            "query": "Action Commit-ID",
+            "message": "Vendor GitHub Action's commit-id"
+        },
+        "git-org": {
+            "value": "CDCgov",
+            "query": "Project Organization",
+            "message": "GitHub Organization name"
+        },
+        "git-repo": {
+            "value": "prime-reportstream",
+            "query": "Project Repository",
+            "message": "GitHub project repository"
+        },
+        "git-action": {
+            "value": "azviz",
+            "query": "Project Name",
+            "message": "GitHub import project's name"
+        },
+        "verbose": {
+            "message": "Enabling output's verbosity"
+        }
+    },
+    "helper": {
+        "help": {
+            "message": "Show this help message and exits"
+        },
+        "info": {
+            "message": "Project credits and online references"
+        },
+        "examples": {
+            "message": "Display script's execution options"
+        },
+        "wizard": {
+            "message": "Parse user-input to execute command"
+        }
+    }
+}
