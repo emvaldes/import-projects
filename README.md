@@ -152,6 +152,11 @@ import-project.shell --config="project-config.json" \
         }
     },
     "params": {
+        "config": {
+            "value": "project-config.json",
+            "query": "Project Configuration",
+            "message": "GitHub Import Project configuration"
+        },
         "git-owner": {
             "value": "JosiahSiegel",
             "query": "Project Owner",
