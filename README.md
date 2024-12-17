@@ -54,6 +54,7 @@ If a full-path for this GitHub Actions' configurations is not provided, the appl
 $ github_configs="${HOME}/.local/.github/configs" ;
 $ configs="${github_configs}/<github-owner>/<github-repo>" ;
 $ mkdir -p "${configs}" ;
+$ export PATH="${PATH}:${configs}" ;
 ```
 
 **Note**: This should present you something like this:
