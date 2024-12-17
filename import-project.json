@@ -64,7 +64,7 @@
     },
     "params": {
         "config": {
-            "value": "project-config.json",
+            "value": "josiahsiegel/azviz-action",
             "query": "Project Configuration",
             "message": "GitHub Import Project configuration"
         },
