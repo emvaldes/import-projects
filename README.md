@@ -50,6 +50,7 @@ $ import-project --help ;
 
 4. Creating custom project-specific configurations for different imports.
 If a full-path for this GitHub Actions' configurations is not provided, the application will seek by default for configurations into the `~/.local/.github/configs/` folder:
+
 ```bash
 $ github_configs="${HOME}/.local/.github/configs" ;
 $ configs="${github_configs}/<github-owner>/<github-repo>" ;
@@ -63,7 +64,7 @@ $ tree ~/.local/.github/configs/ ;
 └── josiahsiegel
     └── azviz-action.json
 
-2 directories, 1 file
+1 directories, 1 file
 ```
 
 **Note**: This will allow you to import the target GitHub Repository (Action) into a fake environment (does not contain an actual project).
