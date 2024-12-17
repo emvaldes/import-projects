@@ -39,13 +39,30 @@ $ cd "${project}" ;
 $ chmod +x ./import-project.shell ;
 $ ln -sv ./import-project.shell ./import-project ;
 ```
-**Note**: Please, make sure that both the Shell/Bash script and the JSON-based configuration file are named the same.
+**Note**: Please, make sure that both the Shell/Bash script and the JSON-based configuration file for the script are named the same.
 The application does expect both components to exist in the same location unless a custom configuration's path is provided.
 
 3. Performing operations in a safe-environment:
 ```bash
 $ cd ./prime-reportstream ;
 $ import-project --help ;
+```
+
+4. Creating custom project-specific configurations:
+```bash
+$ local_etc="${HOME}/.local/etc/.github/actions/configs" ;
+$ configs="${local_etc}/<github-owner>/<github-repo>" ;
+$ mkdir -p "${configs}" ;
+```
+
+**Note**: This should present you something like this:
+```console
+$ tree ~/.local/etc/.github/actions/configs/ ;
+~/.local/etc/.github/actions/configs/
+└── josiahsiegel
+    └── azviz-action.json
+
+2 directories, 1 file
 ```
 
 **Note**: This will allow you to import the target GitHub Repository (Action) into a fake environment (does not contain an actual project).
@@ -75,7 +92,7 @@ Optional    --config            GitHub Import Project configuration
 
 Usage:
 
-import-project.shell --config="project-config.json" \
+import-project.shell --config="josiashsiegel/azviz-action.json" \
                      --git-owner="JosiahSiegel" \
                      --git-name="AzViz-action" \
                      --git-version="v1.0.3" \
@@ -153,7 +170,7 @@ import-project.shell --config="project-config.json" \
     },
     "params": {
         "config": {
-            "value": "project-config.json",
+            "value": "josiahsiegel/azviz-action.json",
             "query": "Project Configuration",
             "message": "GitHub Import Project configuration"
         },
@@ -217,7 +234,7 @@ import-project.shell --config="project-config.json" \
 ### Command Syntax
 ```bash
 $ import-project \
-  --config="<config-file>" \
+  --config="josiahsiegel/azviz-action.json" \
   --git-owner="JosiahSiegel" \
   --git-name="AzViz-action" \
   --git-version="v1.0.3" \
@@ -235,7 +252,7 @@ $ import-project ;
 ```
 
 ### Example
-#### JSON Configuration File (`project-config.json`)
+#### JSON Configuration File (`josiahsiegel/azviz-action.json`)
 ```json
 {
   "vendor": {
