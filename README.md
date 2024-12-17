@@ -58,7 +58,6 @@ $ mkdir -p "${configs}" ;
 **Note**: This should present you something like this:
 ```console
 $ tree ~/.local/etc/.github/actions/configs/ ;
-~/.local/etc/.github/actions/configs/
 └── josiahsiegel
     └── azviz-action.json
 
