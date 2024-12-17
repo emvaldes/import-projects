@@ -26,14 +26,14 @@ At execution time, these custom JSON-driven configurations can be override (see:
 
 ## Installation
 1. Clone this repository:
-```bash
+```console
 $ local_bin="${HOME}/.local/bin" ;
 $ project="${local_bin}/import-projects" ;
 $ mkdir -p "${project}" ;
 $ git clone https://github.com/<organization>/${project}.git "${project}" ;
 ```
 2. Ensure the script has executable permissions:
-```bash
+```console
 $ export PATH="${PATH}:${project}" ;
 $ cd "${project}" ;
 $ chmod +x ./import-project.shell ;
@@ -43,7 +43,7 @@ $ ln -sv ./import-project.shell ./import-project ;
 The application does expect both components to exist in the same location unless a custom configuration's path is provided.
 
 3. Performing operations in a safe-environment:
-```bash
+```console
 $ cd ./prime-reportstream ;
 $ import-project --help ;
 ```
@@ -51,7 +51,7 @@ $ import-project --help ;
 4. Creating custom project-specific configurations for different imports.
 If a full-path for this GitHub Actions' configurations is not provided, the application will seek by default for configurations into the `~/.local/.github/configs/` folder:
 
-```bash
+```console
 $ github_configs="${HOME}/.local/.github/configs" ;
 $ configs="${github_configs}/<github-owner>/<github-repo>" ;
 $ mkdir -p "${configs}" ;
