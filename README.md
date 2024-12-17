@@ -56,6 +56,7 @@ $ github_configs="${HOME}/.local/.github/configs" ;
 $ configs="${github_configs}/<github-owner>/<github-repo>" ;
 $ mkdir -p "${configs}" ;
 $ export PATH="${PATH}:${configs}" ;
+$ # echo -e "\nPath:" && echo "${PATH}" | tr ':' '\n' ;
 ```
 
 **Note**: This should present you something like this:
