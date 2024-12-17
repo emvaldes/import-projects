@@ -48,16 +48,17 @@ $ cd ./prime-reportstream ;
 $ import-project --help ;
 ```
 
-4. Creating custom project-specific configurations:
+4. Creating custom project-specific configurations for different imports.
+If a full-path for this GitHub Actions' configurations is not provided, the application will seek by default for configurations into the `~/.local/.github/configs/` folder:
 ```bash
-$ local_etc="${HOME}/.local/etc/.github/actions/configs" ;
-$ configs="${local_etc}/<github-owner>/<github-repo>" ;
+$ github_configs="${HOME}/.local/.github/configs" ;
+$ configs="${github_configs}/<github-owner>/<github-repo>" ;
 $ mkdir -p "${configs}" ;
 ```
 
 **Note**: This should present you something like this:
 ```console
-$ tree ~/.local/etc/.github/actions/configs/ ;
+$ tree ~/.local/.github/configs/ ;
 └── josiahsiegel
     └── azviz-action.json
 
