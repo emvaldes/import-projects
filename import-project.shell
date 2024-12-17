@@ -46,9 +46,9 @@ function warning () {
     done; IFS="${oIFS}";
     [[ ${#verbose} -eq 0 ]] && export verbose='true';
     #### -----------------------------------------------------------------------
+    local suffix='';
     if [[ ${verbose} == true ]]; then
-            suffix="\nError: ${error_id}";
-      else  suffix='';
+      suffix="\nError: ${error_id}";
     fi;
     display_message --prefix="Warning: " \
                     --message="${message}" \
@@ -63,7 +63,7 @@ function import_config () {
     oIFS="${IFS}";
     for xitem in "${@}"; do
       IFS='='; set `echo -e "${xitem}" | sed -e '1s|^\(-\)\{1,\}||'`
-      [[ ${1#*\--} = "config" ]] && export json_file="${2}";
+      [[ ${1#*\--} = "config" ]] && local config_file="${2}";
       #### ---------------------------------------------------------------------
       [[ ${1#*\--} = "interactive" ]] && export interactive_mode='true';
       ## [[ ${1#*\--} = "dry-run" ]] && export dry_run="${2}";
@@ -72,27 +72,53 @@ function import_config () {
     done; IFS="${oIFS}";
     [[ ${#verbose} -eq 0 ]] && export verbose='true';
     #### -----------------------------------------------------------------------
+    local error=;
+    local header='';
+    local invalid=;
+    local json_config='';
+    local message='';
+    local response='';
     ## Configure default-parameter(s):
-    if [[ ${#json_file} -gt 0 ]]; then
-            json_file="$(
-              echo -e "${json_file}" \
+    if [[ ${#config_file} -gt 0 ]]; then
+            config_file="$(
+              echo -e "${config_file}" \
               | sed -e "s|^\([\~\/]\)\(.*\)$|${HOME}\2|";
             )"
-      else  ## Default JSON Configuration:
-            json_file="${script_config}";
+      else  ## Project-specific JSON Configuration:
+            if [[ ${#config_file} -eq 0 ]]; then
+              invalid=true;
+              error=128;
+              response='';
+              message="Project Configuration";
+              echo -e; read -p "${message} (file): " response;
+              if [[ ${#response} -eq 0 ]]; then
+                      invalid=false;
+                else  export config_file="${project_configs}/${response/.json/}.json";
+                      if [[ ! -f ${config_file} ]]; then
+                        invalid=false;
+                      fi;
+              fi;
+              ## Determine if JSON Configuration file exists?
+              if [[ ${invalid} == false ]]; then
+                warning --message="${message} file ${missing}" \
+                        --error=${error};
+              fi;
+            fi;
     fi;
-    ## echo -e "JSON File: ${json_file}";
+    display_message --header="${message}" \
+                    --message="${config_file}";
+    ## echo -e "JSON Config File: ${config_file}";
     header="JSON config";
     error=1;
-    message="'${json_file}' ${missing}";
-    if [[ ! -f "${json_file}" ]]; then
+    message="'${config_file}' ${missing}";
+    if [[ ! -f "${config_file}" ]]; then
       warning --message="${header} ${message}" \
               --error=${error};
     fi;
     ## Parsing JSON Configuration:
     invalid=false;
-    if [[ -f ${json_file} ]]; then
-        json_config="$( jq -r '.' "${json_file}" )";
+    if [[ -f ${config_file} ]]; then
+        json_config="$( jq -r '.' "${config_file}" )";
         if [[ ! -s "${json_config}" ]]; then
             newline;
             if [[ ${#reload} -eq 0 ]]; then
@@ -115,7 +141,7 @@ function import_config () {
               | jq -r ".project|to_entries|map(\"project_\(.key)=\(.value|tostring)\")|.[]"
             );
             [[ ${verbose} == true ]] && {
-              action_path=".github/actions/${project_action}";
+              local action_path=".github/actions/${project_action}";
               display_message --prefix="Project: " \
                               --message="${project_owner}/${project_repo}/${action_path}";
               newline;
@@ -139,7 +165,6 @@ function download_repository () {
     oIFS="${IFS}";
     for xitem in "${@}"; do
       IFS='='; set `echo -e "${xitem}" | sed -e '1s|^\(-\)\{1,\}||'`
-      [[ ${1#*\--} = "config" ]] && export json_file="${2}";
       [[ ${1#*\--} = "github-repo" ]] && export github_repo="${2}";
       #### ---------------------------------------------------------------------
       [[ ${1#*\--} = "interactive" ]] && export interactive_mode='true';
@@ -149,6 +174,11 @@ function download_repository () {
     done; IFS="${oIFS}";
     [[ ${#verbose} -eq 0 ]] && export verbose='true';
     #### -----------------------------------------------------------------------
+    local target_branch='';
+    local current_branch='';
+    local error=;
+    local pathway='';
+    local request_action='';
     if [[ $( pwd | egrep -c -w "${project_repo}" ) -eq 0 ]]; then
             error=3;
             request_action="Please, change current working directory.";
@@ -186,11 +216,11 @@ function download_repository () {
             error=6;
             warning --message="Current branch is '${current_branch}'!\n${request_action}" \
                     --error=${error};
-      else  checkout="${project_team}/${project_author}/${project_action}";
-            display_message --prefix="Checkout branch: " \
-                            --message="${checkout}";
+      else  target_branch="${project_team}/${project_author}/${project_action}";
+            display_message --prefix="Target branch: " \
+                            --message="${target_branch}";
             newline;
-            git checkout "${checkout}" 2>/dev/null;
+            git checkout "${target_branch}" 2>/dev/null;
             if [[ ${?} -eq 0 ]]; then
               git status; newline;
             fi;
@@ -391,8 +421,9 @@ export script_helper="${script_path}/script-helper.shell";
 
 ## Deprecating this implementation for operational flexibility (decoupling):
 ## export script_config="${script_path}/${script_name/.*/.json}";
-export script_config="${script_path}/project-config.json";
-## echo -e "Script Config: ${script_config}";
+
+export project_configs="${HOME}/.local/.github/configs";
+## echo -e "Project Configs: ${project_configs}";
 
 ## Executing script's workflow:
 import_config "${@}";
