@@ -305,7 +305,7 @@ import-project.shell --config="josiashsiegel/azviz-action" \
     },
     "params": {
         "config": {
-            "value": "josiahsiegel/azviz-action.json",
+            "value": "josiahsiegel/azviz-action",
             "query": "Project Configuration",
             "message": "GitHub Import Project configuration"
         },
