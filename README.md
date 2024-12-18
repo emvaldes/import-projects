@@ -124,6 +124,29 @@ $ tree ~/.local/.github/configs/ ;
 }
 ```
 
+These environment variables will be transformed in-realtime during execution:
+
+```console
+Content Changes: [
+  {
+    "search": "JosiahSiegel/AzViz-action/actions/",
+    "replace": "CDCgov/prime-reportstream/.github/actions/azviz/"
+  },
+  {
+    "search": "JosiahSiegel/AzViz-action",
+    "replace": "CDCgov/prime-reportstream/.github/actions/azviz"
+  },
+  {
+    "search": "v1.0.3",
+    "replace": "663e24299a6336f1ff8dbddadfac1ba5d462f731aaa"
+  },
+  {
+    "search": "actions/azviz/workflows/",
+    "replace": "workflows/azviz--"
+  }
+]
+```
+
 ### JSON Configuration Attributes
 The JSON configuration file must include the following sections:
 
