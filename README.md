@@ -462,19 +462,33 @@ import_project "${@}";
 **Note**: At any point in time, the script will abort if a warning function is used to ensure consistency in safety of using this script and avoid any un-expected behaviors.
 
 ## Functions
+
+#### `newline`
+This is a simple function to abstract the output of new-lines (optional). It has the potential to allow for custom outputs in different formats.
+
+#### `display_message`
+This is an abstraction to centralize all messages to the end-user and avoid hacked contraptions that tend to be non-consistent. It's not restricted to verbosity settings.
+
 #### `warning`
 Displays a warning message with optional error handling. Defines a consistent behavior and leverages the use of the `display_message` function to pass `--prefix` (`Warning: `), `--message` and `--suffix`. It results in the execution of printing an error code if `--verbose` is defined as `true`.
 
 #### `import_config`
-Parses the JSON configuration file and sets environment variables. This is the core of the application as it's defining the configuration sources. If none is provided or the default configuration is missing the script will abort. The script will dynamically generate new settings based on this loaded configuration.
-The use of `jq` is present to ensure these environment variables are imported.
+Imports the Project-specific configurations that are expected but not restricted to a specific path (e.g.: ~/.local/.github/configs/<git-owner>/<git-repo>). It's capable of accepting custom paths.
+**Note**: There is possibility to invoke a separate process to inquire for these expected parametres. The existing link with the `scrip-helper.shell` function provides that.
+
+#### `export_config`
+Parses the JSON configuration file and sets environment variables. This is the core of the application as it's defining the configuration sources.
+If none is provided or the default configuration is missing the script will abort. The script will dynamically generate new settings based on this loaded configuration.
+**Note**: The use of `jq` is present to ensure these environment variables are imported.
 
 #### `download_repository`
 Manages cloning and purging of the GitHub repository. This specific functionality will ensure that current working path is within the expected repository or otherwise will abort exiting the script.
 If the JSON configuration is set to reload (override) the existing content, it will do so and let you know it did.
+If the current/active Git Branch is a protected branch (either: master or main), it's capable of checking out the intended branch-naming pattern. This ensures that no operations will be performed in a protected branch.
 
 #### `import_project`
-This is the core functionality in the script as it orchestrates all operations and workflow. It processes the repository files and updates content based on the configuration.
+This is the core functionality in the script as it orchestrates all operations and workflow. It makes use of the `script-helper.shell` by remotely loading it from the GitHub repo it resides (devops-scripts).
+This function processes all ad-hoc/dynamically provided input parameters and exclude certains folder structures (e.g.: .git, .github, etc.) from processing. It performs the intended changes to the content present in the imported GitHub Action.
 
 ## Error Handling
 The script includes robust error handling:
