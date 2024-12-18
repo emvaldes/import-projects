@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+## Creates a folder in your home directory: ~/devops/tools:
+export devops_tools="${HOME}/devops/tools" ;
+mkdir -p "${devops_tools}" && cd ${_} ;
+echo -e "DevOps Tools: $( pwd )" ;
+
+## Cloning the repo that has the import-projects codebase:
+git clone https://github.com/emvaldes/import-projects.git ;
+cd ./import-projects ;
+
+## Backing-up the project's path (where it was cloned into):
+export project_path="$( pwd )" ;
+echo -e "Project location: ${project_path}";
+
+## Going back to your home directory:
+cd ${HOME} ;
+echo -e "User Home: $( pwd )";
+
+## Creating a ~/.local/bin folder to host the shell script and json file.
+export local_bin="${HOME}/.local/bin" ;
+mkdir -p "${local_bin}" && cd ${_} ;
+
+## Creating a set of symlinks to the script's components *.json file and *.shell script
+## This will allow you to run the script from anywhere when it's in the environment's PATH
+## Also, it's pointing into the repo's location in your system as references to the actual code.
+
+ln -sv "${project_path}/import-script.json" . ;
+ln -sv "${project_path}/import-script.shell" . ;
+ln -sv ./import-project.shell ./import-project ;
+
+## Making sure that the ~/.local/bin is in the system's PATH:
+export PATH="$(
+  echo -e "{PATH})" \
+  | sed -e "s|${local_bin}||g"
+):${local_bin}";
+echo -e "Environment PATH:\n$( echo -e "${PATH}" | awk -F':'' '{print $1}' )" ;
+
+## Please, make sure that you add permanently this PATH ~/.local/bin permanently to your ~/.bash_profile file.
+
+## Going back to your home folder and testing that the script can run from anywhere as it's supposed to be in the system's path:
+cd "${HOME}" ;
+import-project --help ;
+
+## Performs the same symlink to the project's configurations:
+cd "${HOME}/.local" ;
+ln -sv "${project_path}/.github" . ;
+
+## This portion of the code is for you to test the import (download) for the target GitHub Actions.
+## This is a temporary sandbox environment outside of the project for testing only.
+
+cd "${HOME}/.local" ;
+projects="projects/prime-reportstream/.github/actions" ;
+mkdir -p "${projects}" ;
+
+## This is just creating a .gitignore file to make sure your add and commit testings do not include the .git and .github folders.
+touch ${testing}/.gitignore ;
+
+## This will take you back to the ~/.local/projects/prime-reportstream folder.
+cd ../../ ;
+
+## Test the application and do something like this:
+import-project --config=josiahsiegel/git-secrets ;
+
+## THIS SHOULD DO IT! ;)
