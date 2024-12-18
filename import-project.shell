@@ -47,14 +47,17 @@ function warning () {
     [[ ${#verbose} -eq 0 ]] && export verbose='true';
     #### -----------------------------------------------------------------------
     local suffix='';
-    if [[ ${verbose} == true ]]; then
+    if [[ ( ${verbose} == true ) && ( ${#error_id} -gt 0 ) ]]; then
       suffix="\nError: ${error_id}";
     fi;
     display_message --prefix="Warning: " \
                     --message="${message}" \
                     --suffix="${suffix}";
     newline;
-    exit ${error_id};
+    if [[ ${#error_id} -gt 0 ]]; then
+      exit ${error_id};
+    fi;
+    return 0;
   }; alias warning='warning';
 
 ## Objective: Importing the JSON configuration file.
@@ -197,6 +200,7 @@ function download_repository () {
     local error=;
     local pathway='';
     local request_action='';
+    local result=;
     if [[ $( pwd | egrep -c -w "${project_repo}" ) -eq 0 ]]; then
             error=3;
             request_action="Please, change current working directory.";
@@ -229,22 +233,21 @@ function download_repository () {
     fi;
     ## Identifying current/active branch:
     current_branch="$( git rev-parse --abbrev-ref HEAD )";
-    if [[ ${current_branch} =~ 'main|master' ]]; then
-            request_action="Aborting current operations.";
-            error=6;
-            warning --message="Current branch is '${current_branch}'!\n${request_action}" \
-                    --error=${error};
-      else  target_branch="${project_team}/${project_author}/${project_action}";
-            display_message --prefix="Target branch: " \
-                            --message="${target_branch}";
-            newline;
-            git checkout "${target_branch}" 2>/dev/null;
-            if [[ ${?} -eq 0 ]]; then
-              git status; newline;
-            fi;
+    if [[ 'main|master' =~ ${current_branch} ]]; then
+      warning --message="Current branch is '${current_branch}' (protected branch)!";
     fi;
+    target_branch="${project_team}/${project_author}/${project_action}";
+    display_message --prefix="Target branch: " \
+                    --message="${target_branch}";
+    newline;
+    git checkout "${target_branch}" 2>/dev/null;
+    result=${?};
+    if [[ ${result} -gt 0 ]]; then
+      git checkout -b "${target_branch}";
+    fi;
+    git status; newline;
     ## Cloning Target GitHub Repository:
-    display_message --prefix="Cloning repo: " \
+    display_message --prefix="Cloning Repository: " \
                     --message="${github_repo}";
     newline;
     git clone "${github_repo}" .;

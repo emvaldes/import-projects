@@ -1,56 +1,95 @@
-devops: actions (main $=) $
-devops: actions (main $=) $ git rev-parse --abbrev-ref HEAD ;
-main
-devops: actions (main $=) $
-devops: actions (main $=) $ import-project.shell ;
 
-Import: JosiahSiegel/AzViz-action@663e24299a6336f1ff8dbddadfac1ba5d462f731
-Project: CDCgov/prime-reportstream/.github/actions/azviz
+$ alias ctree='tree -FCla --prune -I .git';
+
+$ devops: prime-reportstream (master) $ ctree ;
+./
+└── prime-reportstream/
+    └── .github/
+        └── actions/
+            └── .gitignore
+
+4 directories, 1 file
+
+$ import-project.shell ;
+
+Project Configuration (file): josiahsiegel/azviz-action
+/Users/emvaldes/.local/.github/configs/josiahsiegel/azviz-action.json
 
 Vendor Name: JosiahSiegel
 Vendor Repository: AzViz-action
 Vendor Version: v1.0.3
-Vendor Commit: 663e24299a6336f1ff8dbddadfac1ba5d462f731
-
+Vendor Commit: 663e24299a6336f1ff8dbddadfac1ba5d462f731aaa
 Project Owner: CDCgov
 Project Repo: prime-reportstream
 GitHub Action: azviz
 
-/Users/emvaldes/.repos/clients/aquia/hhs/cdc/prime-reportstream/.github/actions/azviz
+Content Changes: [
+  {
+    "search": "JosiahSiegel/AzViz-action/actions/",
+    "replace": "CDCgov/prime-reportstream/.github/actions/azviz/"
+  },
+  {
+    "search": "JosiahSiegel/AzViz-action",
+    "replace": "CDCgov/prime-reportstream/.github/actions/azviz"
+  },
+  {
+    "search": "v1.0.3",
+    "replace": "663e24299a6336f1ff8dbddadfac1ba5d462f731aaa"
+  },
+  {
+    "search": "actions/azviz/workflows/",
+    "replace": "workflows/azviz--"
+  }
+]
+
 total 0
-drwxr-xr-x   2 emvaldes  staff   64 Dec 11 19:41 .
-drwxr-xr-x  27 emvaldes  staff  864 Dec 11 19:41 ..
+drwxr-xr-x  2 emvaldes  staff   64 Dec 17 20:55 .
+drwxr-xr-x  4 emvaldes  staff  128 Dec 17 20:55 ..
 
-Checkout: devsecops/emvaldes/azviz
-branch 'devsecops/emvaldes/azviz' set up to track 'origin/devsecops/emvaldes/azviz'.
-Switched to a new branch 'devsecops/emvaldes/azviz'
-On branch devsecops/emvaldes/azviz
-Your branch is up to date with 'origin/devsecops/emvaldes/azviz'.
+Target branch: devsecops/emvaldes/azviz
 
-nothing to commit, working tree clean
+Cloning repo: https://github.com/JosiahSiegel/AzViz-action.git
 
-Cloning: https://github.com/JosiahSiegel/AzViz-action.git
 Cloning into '.'...
 remote: Enumerating objects: 76, done.
 remote: Counting objects: 100% (29/29), done.
 remote: Compressing objects: 100% (18/18), done.
 remote: Total 76 (delta 8), reused 25 (delta 8), pack-reused 47 (from 1)
-Receiving objects: 100% (76/76), 22.07 KiB | 337.00 KiB/s, done.
+Receiving objects: 100% (76/76), 22.07 KiB | 1.30 MiB/s, done.
 Resolving deltas: 100% (31/31), done.
 
-Importing default repository configuration
-On branch devsecops/emvaldes/azviz
-Your branch is up to date with 'origin/devsecops/emvaldes/azviz'.
+Warning: Performing GitHub hard-reset.
 
+HEAD is now at 663e242 upload images with svg
+
+Warning: Listing Git-log summary: ...
+
+* 663e242 (HEAD -> main, tag: v1.0.4) upload images with svg
+* 390c4f6 debug linux svg error
+* 37ee538 debug linux svg error
+* 1a516d0 set svg as default
+*   c325934 (tag: v1.0.3) svg files are now included with output (#7)
+|\
+| * 18c692d svg files are now included with output
+|/
+* 2108d16 (tag: v1.0.2) update action name and desc
+*   0891ead Merge pull request #1 from JosiahSiegel/linux
+|\
+| * 8b6ed5a (tag: v1.0.1) conditional os graphviz install
+| * 03c7802 readme update and linux runner
+|/
+* 1a927d6 (tag: v1) action.yml branding
+* 5ca6482 add readme
+* 9ac8730 init
+
+On branch master
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
 	./
 
 nothing added to commit but untracked files present (use "git add" to track)
 
-On branch devsecops/emvaldes/azviz
-Your branch is up to date with 'origin/devsecops/emvaldes/azviz'.
-
+On branch master
 Changes to be committed:
   (use "git restore --staged <file>..." to unstage)
 	new file:   .gitignore
@@ -58,35 +97,34 @@ Changes to be committed:
 	new file:   action.yml
 	new file:   viz_run.ps1
 
-[devsecops/emvaldes/azviz 20fbc9986] Importing JosiahSiegel/AzViz-action default state.
- 4 files changed, 235 insertions(+)
+
+Warning: Importing default repository configuration
+
+[master cde5e7a] Importing JosiahSiegel/AzViz-action default state.
+ 4 files changed, 237 insertions(+)
  create mode 100644 .github/actions/azviz/.gitignore
  create mode 100644 .github/actions/azviz/README.md
  create mode 100644 .github/actions/azviz/action.yml
  create mode 100644 .github/actions/azviz/viz_run.ps1
-On branch devsecops/emvaldes/azviz
-Your branch is ahead of 'origin/devsecops/emvaldes/azviz' by 1 commit.
-  (use "git push" to publish your local commits)
 
+On branch master
 nothing to commit, working tree clean
 
 total 32
-drwxr-xr-x   8 emvaldes  staff   256 Dec 11 19:42 .
-drwxr-xr-x  27 emvaldes  staff   864 Dec 11 19:41 ..
--rw-r--r--   1 emvaldes  staff    13 Dec 11 19:42 .gitignore
--rw-r--r--   1 emvaldes  staff  2882 Dec 11 19:42 README.md
-drwxr-xr-x  12 emvaldes  staff   384 Dec 11 19:42 _git
-drwxr-xr-x   3 emvaldes  staff    96 Dec 11 19:42 _github
--rw-r--r--   1 emvaldes  staff  2716 Dec 11 19:42 action.yml
--rw-r--r--   1 emvaldes  staff  1842 Dec 11 19:42 viz_run.ps1
+drwxr-xr-x   8 emvaldes  staff   256 Dec 17 20:55 .
+drwxr-xr-x   4 emvaldes  staff   128 Dec 17 20:55 ..
+-rw-r--r--   1 emvaldes  staff    26 Dec 17 20:55 .gitignore
+-rw-r--r--   1 emvaldes  staff  2882 Dec 17 20:55 README.md
+drwxr-xr-x  13 emvaldes  staff   416 Dec 17 20:55 _git
+drwxr-xr-x   3 emvaldes  staff    96 Dec 17 20:55 _github
+-rw-r--r--   1 emvaldes  staff  2716 Dec 17 20:55 action.yml
+-rw-r--r--   1 emvaldes  staff  1842 Dec 17 20:55 viz_run.ps1
 
-Listing Target-Files ...
+Warning: Listing Target-Files ...
+
 File: ./README.md
 
-On branch devsecops/emvaldes/azviz
-Your branch is ahead of 'origin/devsecops/emvaldes/azviz' by 1 commit.
-  (use "git push" to publish your local commits)
-
+On branch master
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
@@ -94,12 +132,27 @@ Changes not staged for commit:
 
 no changes added to commit (use "git add" and/or "git commit -a")
 
-[devsecops/emvaldes/azviz 622bbc437] Appending default configuration changes.
+[master 8bbabe6] Appending default configuration changes.
  1 file changed, 3 insertions(+), 3 deletions(-)
-On branch devsecops/emvaldes/azviz
-Your branch is ahead of 'origin/devsecops/emvaldes/azviz' by 2 commits.
-  (use "git push" to publish your local commits)
-
+On branch master
 nothing to commit, working tree clean
 
-devops: actions (devsecops/emvaldes/azviz $>) $
+$ devops: prime-reportstream (master) $ ctree ;
+./
+└── .github/
+    └── actions/
+        ├── .gitignore
+        └── azviz/
+            ├── .gitignore
+            ├── README.md
+            ├── .git/
+            ├── .github/
+            │   └── workflows/
+            │       ├── sample_full_workflow.yml
+            │       ├── sample_min_workflow.yml
+            │       ├── test_linux_runner.yml
+            │       └── test_windows_runner.yml
+            ├── action.yml
+            └── viz_run.ps1
+
+6 directories, 9 files
