@@ -371,7 +371,7 @@ import-project.shell --config="josiashsiegel/azviz-action" \
 ### Command Syntax
 ```bash
 $ import-project \
-  --config="josiahsiegel/azviz-action.json" \
+  --config="josiahsiegel/azviz-action" \
   --git-owner="JosiahSiegel" \
   --git-name="AzViz-action" \
   --git-version="v1.0.3" \
@@ -392,15 +392,25 @@ $ import-project ;
 The script follows these execution steps:
 
 ``` bash
-## Extracting file's path, name and configuration:
-$ export script_path="$( dirname "${0}" )";
-$ export script_name="$( basename "${0}" )";
-$ export script_config="${script_path}/${script_name/.*/.json}";
+## Backing-up Application Input-params:
+export params="${@}";
+
+export script_file="$(pwd)/${0#*\/}";
+export script_path="$( dirname "${0}" )";
+## echo -e "Script Path: ${script_path}";
+
+export script_name="$( basename "${0}" )";
+## echo -e "Script Name: ${script_name}";
+
+export script_helper="${script_path}/script-helper.shell";
+## echo -e "Script Helper: ${script_helper}";
+
+export project_configs="${HOME}/.local/.github/configs";
+## echo -e "Project Configs: ${project_configs}";
 
 ## Executing script's workflow:
-$ import_config "${@}";
-$ import_project "${@}";
-
+import_config "${@}";
+import_project "${@}";
 ```
 
 1. **Configuration Loading**:
