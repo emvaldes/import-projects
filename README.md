@@ -24,6 +24,8 @@ At execution time, these custom JSON-driven configurations can be override (see:
 - [jq](https://stedolan.github.io/jq/) (JSON processor) -> version: jq-1.7.1
 - Git (version 2.47.0 or later)
 
+---
+
 ## Installation
 1. Clone this repository:
 ```console
@@ -32,6 +34,9 @@ $ project="${local_bin}/import-projects" ;
 $ mkdir -p "${project}" ;
 $ git clone https://github.com/<organization>/${project}.git "${project}" ;
 ```
+
+---
+
 2. Ensure the script has executable permissions:
 ```console
 $ export PATH="${PATH}:${project}" ;
@@ -42,11 +47,15 @@ $ ln -sv ./import-project.shell ./import-project ;
 **Note**: Please, make sure that both the Shell/Bash script and the JSON-based configuration file for the script are named the same.
 The application does expect both components to exist in the same location unless a custom configuration's path is provided.
 
+---
+
 3. Performing operations in a safe-environment:
 ```console
 $ cd ./prime-reportstream ;
 $ import-project --help ;
 ```
+
+---
 
 4. Creating custom project-specific configurations for different imports.
 If a full-path for this GitHub Actions' configurations is not provided, the application will seek by default for configurations into the `~/.local/.github/configs/` folder:
@@ -59,7 +68,14 @@ $ export PATH="${PATH}:${configs}" ;
 $ # echo -e "\nPath:" && echo "${PATH}" | tr ':' '\n' ;
 ```
 
-**Note**: This should present you something like this:
+---
+
+5. Create this file structure for the GitHub-Vendor and Repository:
+```console
+$ mkdir -p 'josiahsiegel' ;
+$ touch josiahsiegel/azviz-action.json ;
+```
+
 ```console
 $ tree ~/.local/.github/configs/ ;
 └── josiahsiegel
@@ -68,9 +84,102 @@ $ tree ~/.local/.github/configs/ ;
 1 directories, 1 file
 ```
 
-**Note**: This will allow you to import the target GitHub Repository (Action) into a fake environment (does not contain an actual project).
-- This will allow you to test your workflow and determine if the imported GitHub Repository (Action) will require further changes other than those included by default.
+### Example
+#### JSON Configuration File (`josiahsiegel/azviz-action.json`)
+```json
+{
+  "vendor": {
+    "name": "JosiahSiegel",
+    "repo": "AzViz-action",
+    "version": "v1.0.3",
+    "commit": "663e24299a6336f1ff8dbddadfac1ba5d462f731aaa"
+  },
+  "project": {
+    "owner": "CDCgov",
+    "repo": "prime-reportstream",
+    "team": "devsecops",
+    "author": "emvaldes",
+    "action": "azviz"
+  },
+  "reload": false,
+  "verbose": true,
+  "changes": [
+    {
+      "search": "${vendor_name}/${vendor_repo}/actions/",
+      "replace": "${project_owner}/${project_path}/"
+    },
+    {
+      "search": "${vendor_name}/${vendor_repo}",
+      "replace": "${project_owner}/${project_path}"
+    },
+    {
+      "search": "${vendor_version}",
+      "replace": "${vendor_commit}"
+    },
+    {
+      "search": "actions/${project_action}/workflows/",
+      "replace": "workflows/${project_action}--"
+    }
+  ]
+}
+```
+
+### JSON Configuration Attributes
+The JSON configuration file must include the following sections:
+
+| Vendor | Type | Description |
+|-|-|-|
+| --**name** | String | GitHub project organization or owner. |
+| --**repo** | String | GitHub target repository name to be imported. |
+| --**version** | String | GitHub version or tag (e.g., `v1.0.3`) to be imported. |
+| --**commit** | String | GitHub hash-commit to be extracted (if required). |
+
+| Project | Type | Description |
+|-|-|-|
+| --**owner** | String | GitHub project organization or owner. |
+| --**repo** | String | GitHub target project hosting imported GitHub Action. |
+| --**team** | String | DevOps Team operating these project's Action imports. |
+| --**author** | String | DevOps Engineer performing these import operations. |
+| --**action** | String | Optional parameter to rename the imported repository. |
+
+| Custom | Type | Description |
+|-|-|-|
+| --**config** | String | Path to a custom JSON configuration file (optional). |
+| --**reload** | Boolean | Purge existing repository content (pre-cloning). |
+| --**verbose** | Boolean | Enables detailed output for debugging and tracking. |
+
+### Output
+- The script clones the GitHub repository defined in the JSON file or other parameters can be provided in real-time during execution/invocation.
+- Processes files to update references based on vendor and project configuration.
+- Displays logs for each action when `--verbose` is enabled or otherwise is ignored. The JSON-based configuration is supposed to pre-define this behavior but the script will need to be adjusted.
+
+---
+
+6. Create a prototyping/testing environment to evaluate the process:
+
+```console
+$ testing="prime-reportstream/.github/actions" ;
+$ mkdir -p "${testing}" ;
+$ touch ${testing}/.gitignore ;
+```
+
+This will allow you to import the target GitHub Repository (Action) into a fake environment (does not contain an actual project).
+- Testing your workflow and determine if the imported GitHub Repository (Action) will require further changes other than those included by default.
 - Once you are done, then make sure to switch to an actual local repository for your project and perform the actual importing and publishing operations.
+
+```console
+$ alias ctree='tree -FCla --prune -I .git' ;
+$ devops: prime-reportstream (master) $ ctree ;
+./
+└── prime-reportstream/
+    └── .github/
+        └── actions/
+            └── .gitignore
+
+3 directories, 1 file
+```
+
+---
 
 This automated framework has a built-in helper (assistant) that handles all help related requests.
 It uses a set of predefined built-in features `help`, `examples`, `wizard` and `info`. See example:
@@ -95,7 +204,7 @@ Optional    --config            GitHub Import Project configuration
 
 Usage:
 
-import-project.shell --config="josiashsiegel/azviz-action.json" \
+import-project.shell --config="josiashsiegel/azviz-action" \
                      --git-owner="JosiahSiegel" \
                      --git-name="AzViz-action" \
                      --git-version="v1.0.3" \
@@ -233,6 +342,8 @@ import-project.shell --config="josiashsiegel/azviz-action.json" \
 }
 ```
 
+---
+
 ## Usage
 ### Command Syntax
 ```bash
@@ -253,57 +364,6 @@ or just execute one-liner command (JSON-based configuration).
 ``` bash
 $ import-project ;
 ```
-
-### Example
-#### JSON Configuration File (`josiahsiegel/azviz-action.json`)
-```json
-{
-  "vendor": {
-    "name": "JosiahSiegel",
-    "repo": "AzViz-action",
-    "version": "v1.0.3",
-    "commit": "663e24299a6336f1ff8dbddadfac1ba5d462f731"
-  },
-  "project": {
-    "owner": "CDCgov",
-    "repo": "prime-reportstream",
-    "team": "devsecops",
-    "author": "emvaldes",
-    "action": "azviz"
-  },
-  "reload": true,
-  "verbose": true
-}
-```
-
-### JSON Configuration Attributes
-The JSON configuration file must include the following sections:
-
-| Vendor | Type | Description |
-|-|-|-|
-| --**name** | String | GitHub project organization or owner. |
-| --**repo** | String | GitHub target repository name to be imported. |
-| --**version** | String | GitHub version or tag (e.g., `v1.0.3`) to be imported. |
-| --**commit** | String | GitHub hash-commit to be extracted (if required). |
-
-| Project | Type | Description |
-|-|-|-|
-| --**owner** | String | GitHub project organization or owner. |
-| --**repo** | String | GitHub target project hosting imported GitHub Action. |
-| --**team** | String | DevOps Team operating these project's Action imports. |
-| --**author** | String | DevOps Engineer performing these import operations. |
-| --**action** | String | Optional parameter to rename the imported repository. |
-
-| Custom | Type | Description |
-|-|-|-|
-| --**config** | String | Path to a custom JSON configuration file (optional). |
-| --**reload** | Boolean | Purge existing repository content (pre-cloning). |
-| --**verbose** | Boolean | Enables detailed output for debugging and tracking. |
-
-### Output
-- The script clones the GitHub repository defined in the JSON file or other parameters can be provided in real-time during execution/invocation.
-- Processes files to update references based on vendor and project configuration.
-- Displays logs for each action when `--verbose` is enabled or otherwise is ignored. The JSON-based configuration is supposed to pre-define this behavior but the script will need to be adjusted.
 
 ## Workflow
 The script follows these execution steps:
