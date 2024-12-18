@@ -57,7 +57,7 @@ function warning () {
     exit ${error_id};
   }; alias warning='warning';
 
-## Objective: Parses the JSON configuration file and sets environment variables.
+## Objective: Importing the JSON configuration file.
 function import_config () {
     ## echo -e "Tracking_process: ${FUNCNAME} ${@}";
     oIFS="${IFS}";
@@ -75,7 +75,6 @@ function import_config () {
     local error=;
     local header='';
     local invalid=;
-    local json_config='';
     local message='';
     local response='';
     ## Configure default-parameter(s):
@@ -87,7 +86,7 @@ function import_config () {
       else  ## Project-specific JSON Configuration:
             if [[ ${#config_file} -eq 0 ]]; then
               invalid=true;
-              error=128;
+              error=1;
               response='';
               message="Project Configuration";
               echo -e; read -p "${message} (file): " response;
@@ -108,13 +107,30 @@ function import_config () {
     display_message --header="${message}" \
                     --message="${config_file}";
     ## echo -e "JSON Config File: ${config_file}";
-    header="JSON config";
-    error=1;
-    message="'${config_file}' ${missing}";
-    if [[ ! -f "${config_file}" ]]; then
-      warning --message="${header} ${message}" \
-              --error=${error};
-    fi;
+    ## Export JSON Configurations:
+    export_config --config="${config_file}";
+    return 0;
+  }; alias import-config='import_config';
+
+## Objective: Exporting JSON configuration as environment variables.
+function export_config () {
+    ## echo -e "Tracking_process: ${FUNCNAME} ${@}";
+    oIFS="${IFS}";
+    for xitem in "${@}"; do
+      IFS='='; set `echo -e "${xitem}" | sed -e '1s|^\(-\)\{1,\}||'`
+      [[ ${1#*\--} = "config" ]] && local config_file="${2}";
+      #### ---------------------------------------------------------------------
+      [[ ${1#*\--} = "interactive" ]] && export interactive_mode='true';
+      ## [[ ${1#*\--} = "dry-run" ]] && export dry_run="${2}";
+      [[ ${1#*\--} = "verbose" ]] && export verbose="${2}";
+      [[ ${1#*\--} = "help" ]] && export display_help='true';
+    done; IFS="${oIFS}";
+    [[ ${#verbose} -eq 0 ]] && export verbose='true';
+    #### -----------------------------------------------------------------------
+    local error=;
+    local invalid=;
+    local message='';
+    local response='';
     ## Parsing JSON Configuration:
     invalid=false;
     if [[ -f ${config_file} ]]; then
@@ -140,6 +156,7 @@ function import_config () {
               echo -e "${json_config}" \
               | jq -r ".project|to_entries|map(\"project_\(.key)=\(.value|tostring)\")|.[]"
             );
+            ## Dynamically constructing paths:
             [[ ${verbose} == true ]] && {
               local action_path=".github/actions/${project_action}";
               display_message --prefix="Project: " \
@@ -152,8 +169,9 @@ function import_config () {
     fi;
     ## Messaging empty/invalid JSON configuration:
     [[ "${invalid}" == true ]] && {
+      message="Project settings are invalid";
       error=2;
-      warning --message="${header} ${message}" \
+      warning --message="${message}" \
               --error=${error};
     };
     return 0;
@@ -188,9 +206,9 @@ function download_repository () {
               pwd | sed -e "s|${project_repo}||g" \
               | awk -F'//' '{print $1}'
             )/${project_path}" | sed -e 's|\/\/|/|' )";
-            display_message --prefix="Pathway: " \
-                            --message="${pathway}";
-            newline;
+            # display_message --prefix="Pathway: " \
+            #                 --message="${pathway}";
+            # newline;
             mkdir -p "${pathway}" && cd ${_};
             ls -al; newline;
     fi;
@@ -367,6 +385,11 @@ function import_project () {
     newline;
     ## Downloading GitHub Repository:
     export project_path="${project_repo}/.github/actions/${project_action}";
+    ## Changes object (Search/Replace):
+    export changes="$( echo -e "${json_config}" | jq -r '.changes' )";
+    display_message --prefix="Content Changes: " \
+                    --message="$( echo -e ${changes} | envsubst | jq . )";
+    newline;
     #### -----------------------------------------------------------------------
     ## Downloading Remote/External Repository:
     download_repository --github-repo="${github_repo}";
