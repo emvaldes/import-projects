@@ -318,6 +318,8 @@ function import_project () {
       [[ ${1#*\--} = "info" ]] && local info_mode='true';
     done; IFS="${oIFS}";
     [[ ${#verbose} -eq 0 ]] && export verbose='true';
+    #### -----------------------------------------------------------------------
+    local error=;
     ## Prividing operational assistance (helper)
     if [[ ( ${display_help} == 'true' )   || \
           ( ${example_mode} == 'true' ) || \
@@ -339,8 +341,9 @@ function import_project () {
                             --info=${info_mode} \
               ;
               return 1;
-        else  warning --message="Script Helper was not found!" \
-                      --error=2;
+        else  error=2;
+              warning --message="Script Helper was not found!" \
+                      --error=${error};
       fi;
       ## Aborting script's execution.
       exit 0;

@@ -171,6 +171,11 @@ The JSON configuration file must include the following sections:
 | --**reload** | Boolean | Purge existing repository content (pre-cloning). |
 | --**verbose** | Boolean | Enables detailed output for debugging and tracking. |
 
+| Changes | Type | Description |
+|-|-|-|
+| --**search** | Custom | Define patterns to be replaced (text, variables, regex). |
+| --**replace** | Custom | Define replace patterns (text, variables, regex). |
+
 ### Output
 - The script clones the GitHub repository defined in the JSON file or other parameters can be provided in real-time during execution/invocation.
 - Processes files to update references based on vendor and project configuration.
