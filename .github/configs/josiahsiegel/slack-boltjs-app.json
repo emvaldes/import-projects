@@ -1,0 +1,36 @@
+{
+  "vendor": {
+    "name": "JosiahSiegel",
+    "repo": "slack-boltjs-app",
+    "version": "",
+    "commit": "6cce33cad90ba1d16d7bd85f4c40b46aa302ee6d"
+  },
+  "project": {
+    "owner": "CDCgov",
+    "repo": "prime-reportstream",
+    "team": "devsecops",
+    "author": "emvaldes",
+    "action": "slack-boltjs-app"
+  },
+  "reload": false,
+  "verbose": true,
+  "changes": [
+    {
+      "search": "${vendor_name}/${vendor_repo}/actions/",
+      "replace": "${project_owner}/${project_path}/"
+    },
+    {
+      "search": "${vendor_name}/${vendor_repo}",
+      "replace": "${project_owner}/${project_path}"
+    },
+    {
+      "search": "${vendor_version}",
+      "replace": "${vendor_commit}"
+    },
+    {
+      "search": "actions/${project_action}/workflows/",
+      "replace": "workflows/${project_action}--"
+    }
+  ],
+  "imported": "false"
+}

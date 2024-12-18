@@ -1,0 +1,36 @@
+{
+  "vendor": {
+    "name": "JosiahSiegel",
+    "repo": "runleaks",
+    "version": "v1",
+    "commit": "4dd30d107c03b6ade87978e10c94a77015e488f9"
+  },
+  "project": {
+    "owner": "CDCgov",
+    "repo": "prime-reportstream",
+    "team": "devsecops",
+    "author": "emvaldes",
+    "action": "runleaks"
+  },
+  "reload": false,
+  "verbose": true,
+  "changes": [
+    {
+      "search": "${vendor_name}/${vendor_repo}/actions/",
+      "replace": "${project_owner}/${project_path}/"
+    },
+    {
+      "search": "${vendor_name}/${vendor_repo}",
+      "replace": "${project_owner}/${project_path}"
+    },
+    {
+      "search": "${vendor_version}",
+      "replace": "${vendor_commit}"
+    },
+    {
+      "search": "actions/${project_action}/workflows/",
+      "replace": "workflows/${project_action}--"
+    }
+  ],
+  "imported": "false"
+}
