@@ -25,8 +25,8 @@ mkdir -p "${local_bin}" && cd ${_} ;
 ## This will allow you to run the script from anywhere when it's in the environment's PATH
 ## Also, it's pointing into the repo's location in your system as references to the actual code.
 
-ln -sv "${project_path}/import-script.json" . ;
-ln -sv "${project_path}/import-script.shell" . ;
+ln -sv "${project_path}/import-project.json" . ;
+ln -sv "${project_path}/import-project.shell" . ;
 ln -sv ./import-project.shell ./import-project ;
 
 ## Making sure that the ~/.local/bin is in the system's PATH:
