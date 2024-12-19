@@ -66,7 +66,7 @@ function import_config () {
     oIFS="${IFS}";
     for xitem in "${@}"; do
       IFS='='; set `echo -e "${xitem}" | sed -e '1s|^\(-\)\{1,\}||'`
-      [[ ${1#*\--} = "config" ]] && local config_file="${2}";
+      [[ ${1#*\--} = "config" ]] && export config_file="${2/.json/}.json";
       #### ---------------------------------------------------------------------
       [[ ${1#*\--} = "interactive" ]] && export interactive_mode='true';
       ## [[ ${1#*\--} = "dry-run" ]] && export dry_run="${2}";
@@ -86,30 +86,33 @@ function import_config () {
               echo -e "${config_file}" \
               | sed -e "s|^\([\~\/]\)\(.*\)$|${HOME}\2|";
             )"
-      else  ## Project-specific JSON Configuration:
-            if [[ ${#config_file} -eq 0 ]]; then
-              invalid=true;
-              error=1;
-              response='';
-              message="Project Configuration";
-              echo -e; read -p "${message} (file): " response;
-              if [[ ${#response} -eq 0 ]]; then
-                      invalid=false;
-                else  export config_file="${project_configs}/${response/.json/}.json";
-                      if [[ ! -f ${config_file} ]]; then
-                        invalid=false;
-                      fi;
-              fi;
-              ## Determine if JSON Configuration file exists?
-              if [[ ${invalid} == false ]]; then
-                warning --message="${message} file ${missing}" \
-                        --error=${error};
-              fi;
+      ## Inquiring Project-specific JSON Configuration:
+      elif [[ ${#config_file} -eq 0 ]]; then
+            error=1;
+            response='';
+            message="Project Configuration";
+            echo -e; read -p "${message} (file): " response;
+            if [[ ${#response} -eq 0 ]]; then
+                    invalid=true;
+              else  export config_file="${response/.json/}.json";
             fi;
+      else  warning --message="Unknown operation/request!" --error=99;
     fi;
-    display_message --header="${message}" \
-                    --message="${config_file}";
-    ## echo -e "JSON Config File: ${config_file}";
+    ## Evaluate if Configuration-file exists:
+    if [[ ! -e "${config_file}" ]]; then invalid=true; else invalid=false; fi;
+    if [[ ! -e "${project_configs}/${config_file}" ]]; then
+            invalid=true;
+      else  invalid=false;
+            export config_file="${project_configs}/${config_file}";
+    fi;
+    ## Determine if JSON Configuration file exists?
+    if [[ ${invalid} == true ]]; then
+      warning --message="${message} file ${missing}" \
+              --error=${error};
+      else  ## echo -e "JSON Config File: ${config_file}";
+            display_message --header="${message}" \
+                            --message="${config_file}";
+    fi;
     ## Export JSON Configurations:
     export_config --config="${config_file}";
     return 0;
@@ -121,7 +124,7 @@ function export_config () {
     oIFS="${IFS}";
     for xitem in "${@}"; do
       IFS='='; set `echo -e "${xitem}" | sed -e '1s|^\(-\)\{1,\}||'`
-      [[ ${1#*\--} = "config" ]] && local config_file="${2}";
+      [[ ${1#*\--} = "config" ]] && export config_file="${2/.json/}.json";
       #### ---------------------------------------------------------------------
       [[ ${1#*\--} = "interactive" ]] && export interactive_mode='true';
       ## [[ ${1#*\--} = "dry-run" ]] && export dry_run="${2}";
@@ -136,7 +139,7 @@ function export_config () {
     local response='';
     ## Parsing JSON Configuration:
     invalid=false;
-    if [[ -f ${config_file} ]]; then
+    if [[ -e "${config_file}" ]]; then
         json_config="$( jq -r '.' "${config_file}" )";
         if [[ ! -s "${json_config}" ]]; then
             newline;
@@ -178,7 +181,7 @@ function export_config () {
               --error=${error};
     };
     return 0;
-  }; alias import-config='import_config';
+  }; alias export-config='export_config';
 
 ## Objective: Manages cloning and purging of the GitHub repository.
 function download_repository () {
@@ -392,9 +395,9 @@ function import_project () {
     ## Downloading GitHub Repository:
     export project_path="${project_repo}/.github/actions/${project_action}";
     ## Changes object (Search/Replace):
-    export changes="$( echo -e "${json_config}" | jq -r '.changes' )";
+    export changes="$( echo -e "${json_config}" | jq -r '.changes' | envsubst )";
     display_message --prefix="Content Changes: " \
-                    --message="$( echo -e ${changes} | envsubst | jq . )";
+                    --message="$( echo -e ${changes} | jq . )";
     newline;
     #### -----------------------------------------------------------------------
     ## Downloading Remote/External Repository:
@@ -413,21 +416,27 @@ function import_project () {
       | sort -u
     )) ;
     #### -----------------------------------------------------------------------
-    ## Listing List-Of-Files:
-    display_message --message="Listing Target-Files ...";
+    ## Collecting/Fetching requested changes:
+    requests=$( echo -e "${changes}" | jq -c '.[]' );
+    ## Processing List-Of-Files:
+    display_message --message="Processing Target-Files ...";
     newline;
-    for file in ${files[@]}; do echo -e "File: ${file}"; done;
+    for file in ${files[@]}; do
+      display_message --message="File: ${file}";
+      for request in ${requests}; do
+        ## Extracting JSON-based Search/Replace patterns:
+        search=$( echo -e "${request}" | jq -r '.search' );
+        # display_message --prefix="Search: " --message="${search}";
+        replace=$( echo -e "${request}" | jq -r '.replace' );
+        # display_message --prefix="Replace: " --message="${replace}";
+        ## Executing Search/Replace operations:
+        for file in ${files[@]}; do
+          sed -i '' "s|${search}|${replace}|g" "${file}";
+        done;
+      done;
+    done;
     newline;
     #### -----------------------------------------------------------------------
-    ## Parsing Target Files:
-    for file in ${files[@]}; do
-      sed -i '' \
-          -e "s|\(${vendor_name}/${vendor_repo}/actions/\)|${project_owner}/${project_path}/|gi" \
-          -e "s|${vendor_name}/${vendor_repo}|${project_owner}/${project_path}|gi" \
-          -e "s|${vendor_version}|${vendor_commit}|gi" \
-          -e "s|actions/${project_action}/workflows/|workflows/${project_action}--|gi" \
-      ${file};
-    done ;
     git status; newline;
     git add . && git commit -m "Appending default configuration changes.";
     git status; newline;
@@ -453,6 +462,22 @@ export script_helper="${script_path}/script-helper.shell";
 
 export project_configs="${HOME}/.local/.github/configs";
 ## echo -e "Project Configs: ${project_configs}";
+
+## Evaluates if all script's dependencies are installed.
+devops_tools=true;
+
+## Check for dependencies (jq):
+declare -a packages=( jq );
+for package in ${packages[@]}; do
+  command -v jq &>/dev/null;
+  if [[ ${?} -gt 0 ]]; then
+    devops_tools=false;
+    message="'${package}' is not installed.";
+    request="Please install it to use this script.";
+    warning --message="'${message}'\n${request}";
+  fi;
+done;
+[[ ${devops_tools} == false ]] && exit 99;
 
 ## Executing script's workflow:
 import_config "${@}";
