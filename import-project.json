@@ -13,7 +13,8 @@
             "config",
             "git-org",
             "git-repo",
-            "git-action"
+            "git-action",
+            "author"
         ],
         "examples": [
             [
@@ -24,7 +25,8 @@
                 "git-commit",
                 "git-org",
                 "git-repo",
-                "git-action"
+                "git-action",
+                "author"
             ]
         ],
         "info": {
@@ -40,21 +42,25 @@
             },
             "devsecops": [
                 {
+                    "id": "devopsmatt",
                     "name": "Matt Szubrycht",
                     "email": "matt.szubrycht@aquia.io",
                     "role": "Director of DevSecOps & SRE"
                 },
                 {
+                    "id": "emvaldes",
                     "name": "Eduardo Valdes",
                     "email": "eduardo.valdes@aquia.io",
                     "role": "DevSecOps Engineer"
                 },
                 {
+                    "id": "scott-aquia",
                     "name": "Scott Zimmerman",
                     "email": "scott.zimmerman@aquia.io",
                     "role": "Senior GRC Engineer"
                 },
                 {
+                    "id": "bethbeza",
                     "name": "Beth Beza",
                     "email": "beth.beza@aquia.io",
                     "role": "Mid-Level Security Analyst"
@@ -102,6 +108,11 @@
             "value": "azviz",
             "query": "Project Name",
             "message": "GitHub import project's name"
+        },
+        "author": {
+            "value": "emvaldes",
+            "query": "GitHub User-ID",
+            "message": "GitHub User-ID project specific"
         },
         "verbose": {
             "message": "Enabling output's verbosity"

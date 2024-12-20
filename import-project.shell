@@ -310,6 +310,7 @@ function import_project () {
       [[ ${1#*\--} = "git-org" ]] && export __project_owner="${2}";
       [[ ${1#*\--} = "git-repo" ]] && export __project_repo="${2}";
       [[ ${1#*\--} = "git-action" ]] && export __project_action="${2}";
+			[[ ${1#*\--} = "author" ]] && export __project_author="${2}";
       #### ---------------------------------------------------------------------
       [[ ${1#*\--} = "interactive" ]] && export interactive_mode='true';
       ## [[ ${1#*\--} = "dry-run" ]] && export dry_run="${2}";
@@ -323,6 +324,7 @@ function import_project () {
     [[ ${#verbose} -eq 0 ]] && export verbose='true';
     #### -----------------------------------------------------------------------
     local error=;
+    local message='';
     ## Prividing operational assistance (helper)
     if [[ ( ${display_help} == 'true' )   || \
           ( ${example_mode} == 'true' ) || \
@@ -388,6 +390,22 @@ function import_project () {
       export project_action="${__project_action}";
     fi;
     display_message --prefix="${header}: " --message="${project_action}";
+    header="Project Author";
+    if [[ ${#__project_author} -gt 0 ]]; then
+            export project_author="${__project_author}";
+      else  github_author="$(
+              echo -e $(
+                git config --local user.email || git config --global user.email
+              ) | cut -d'@' -f1
+            )";
+            if [[ "${github_author}" != "${project_author}" ]]; then
+              message="Your GitHub User-ID '${github_author}' does not match";
+              message+=" the project's author '${project_author}'!";
+              display_message --prefix="\nWarning: " --message="${message}";
+              export project_author="${github_author}";
+            fi;
+    fi;
+    display_message --prefix="${header}: " --message="${project_author}";
     ## GitHub Remote/External Repository:
     export github_repo="https://github.com/${vendor_name}/${vendor_repo}.git";
     #### -----------------------------------------------------------------------
