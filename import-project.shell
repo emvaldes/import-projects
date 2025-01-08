@@ -81,6 +81,10 @@ function import_config () {
     local message='';
     local response='';
     ## Configure default-parameter(s):
+
+echo -e "Config file: ${config_file}";
+return 999;
+
     if [[ ${#config_file} -gt 0 ]]; then
             config_file="$(
               echo -e "${config_file}" \
@@ -338,6 +342,7 @@ function import_project () {
       source <(
         curl -s https://raw.githubusercontent.com/${helper_module}
       ) 2>/dev/null;
+      ## echo -e "Script File: ${script_file}";
       if declare -F script_helper > /dev/null; then
               ## display_message --message="Loaded Script-Helper in memory!";
               script_helper --caller="${script_file}" \
@@ -354,6 +359,8 @@ function import_project () {
       exit 0;
     fi;
     #### -----------------------------------------------------------------------
+    ## Modifying default operational flow to prioritize the built-in help module.
+    import_config "${@}";
     ## Configure default-parameter(s):
     header="Vendor Name";
     if [[ ${#__vendor_name} -gt 0 ]]; then
@@ -465,7 +472,10 @@ function import_project () {
 ## Backing-up Application Input-params:
 export params="${@}";
 
-export script_file="$(pwd)/${0#*\/}";
+## export script_file="$(pwd)/${0#*\/}";
+export script_file="/${0#*\/}";
+## echo -e "Script File: ${script_file}";
+
 export script_path="$( dirname "${0}" )";
 ## echo -e "Script Path: ${script_path}";
 
@@ -497,11 +507,13 @@ for package in ${packages[@]}; do
 done;
 [[ ${devops_tools} == false ]] && exit 99;
 
+## Note: The "import_config process is now nested within the import_project"
+## import_config "${@}";
+
 ## Executing script's workflow:
-import_config "${@}";
 import_project "${@}";
 
-## import-reository \
+## import-project \
 ##   --git-owner="JosiahSiegel" \
 ##   --git-name="AzViz-action" \
 ##   --git-version="v1.0.3" \
@@ -511,4 +523,4 @@ import_project "${@}";
 ##   --git-actoin="azviz" \
 ##;
 
-## import-reository --config="import.json";
+## import-project --config="project.json";
