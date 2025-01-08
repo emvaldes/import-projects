@@ -81,10 +81,6 @@ function import_config () {
     local message='';
     local response='';
     ## Configure default-parameter(s):
-
-echo -e "Config file: ${config_file}";
-return 999;
-
     if [[ ${#config_file} -gt 0 ]]; then
             config_file="$(
               echo -e "${config_file}" \
@@ -336,12 +332,14 @@ function import_project () {
           ( ${info_mode} == 'true' )
       ]]; then
       ## JSON source and object:
-      helper_module="emvaldes/devops-scripts/master/script-helper.shell";
-      ## display_message --message="Loading the Script-helper for built-in support ...";
-      # source ${script_helper} 2>/dev/null;
-      source <(
-        curl -s https://raw.githubusercontent.com/${helper_module}
-      ) 2>/dev/null;
+      ## display_message --message="Loading the Script-helper '${script_helper}' for built-in support ...";
+      if [[ -e "${script_helper}" ]]; then
+              source ${script_helper} 2>/dev/null;
+        else  helper_module="emvaldes/devops-scripts/master/script-helper.shell";
+              source <(
+                curl -s https://raw.githubusercontent.com/${helper_module}
+              ) 2>/dev/null;
+      fi;
       ## echo -e "Script File: ${script_file}";
       if declare -F script_helper > /dev/null; then
               ## display_message --message="Loaded Script-Helper in memory!";
